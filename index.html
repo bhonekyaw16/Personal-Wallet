@@ -2,7 +2,7 @@
 <html lang="my">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Personal Wallet • Fintech OS 3.3</title>
   
   <!-- Premium Fonts -->
@@ -126,8 +126,8 @@
   <header class="sticky top-0 z-30 px-4 py-2.5 bg-[#04060d]/85 backdrop-blur-2xl border-b border-white/[0.08]">
     <div class="max-w-4xl mx-auto flex items-center justify-between">
       <div class="flex items-center gap-2">
-        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-        <span class="text-xs font-bold tracking-wide text-slate-300">SYNC ACTIVE</span>
+        <span id="syncDot" class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+        <span id="syncText" class="text-xs font-bold tracking-wide text-slate-300">CONNECTING...</span>
       </div>
 
       <!-- Quick Actions (EN/MM, Lock, Eye, CSV) -->
@@ -340,17 +340,17 @@
             <div class="flex justify-between text-xs text-slate-300 mb-1">
               <span data-i18n="rate_label">၁ ဘတ် (THB) ပေါက်ဈေး (MMK)</span>
             </div>
-            <input type="number" id="convRate" value="120" oninput="calculateConvert('rate')" class="w-full glass-input rounded-xl px-3 py-2 text-xs text-white font-bold" />
+            <input type="number" id="convRate" value="120" min="0.0001" step="any" inputmode="decimal" oninput="calculateConvert('rate')" class="w-full glass-input rounded-xl px-3 py-2 text-xs text-white font-bold" />
           </div>
 
           <div class="grid grid-cols-2 gap-3">
             <div>
               <label class="block text-xs text-amber-300 font-bold mb-1">THB (ဘတ်)</label>
-              <input type="number" id="convTHB" placeholder="0" oninput="calculateConvert('thb')" class="w-full glass-input rounded-xl px-3 py-2 text-sm text-white font-black" />
+              <input type="number" id="convTHB" placeholder="0" min="0" step="any" inputmode="decimal" oninput="calculateConvert('thb')" class="w-full glass-input rounded-xl px-3 py-2 text-sm text-white font-black" />
             </div>
             <div>
               <label class="block text-xs text-indigo-300 font-bold mb-1">MMK (ကျပ်)</label>
-              <input type="number" id="convMMK" placeholder="0" oninput="calculateConvert('mmk')" class="w-full glass-input rounded-xl px-3 py-2 text-sm text-white font-black" />
+              <input type="number" id="convMMK" placeholder="0" min="0" step="any" inputmode="decimal" oninput="calculateConvert('mmk')" class="w-full glass-input rounded-xl px-3 py-2 text-sm text-white font-black" />
             </div>
           </div>
         </div>
@@ -447,7 +447,7 @@
           <div class="grid grid-cols-3 gap-2">
             <div class="col-span-2">
               <label class="block text-xs text-slate-300 font-medium mb-1" data-i18n="amount_label">ပမာဏ</label>
-              <input type="number" step="any" id="txAmount" required placeholder="0.00" class="w-full glass-input rounded-xl px-3.5 py-2.5 text-white font-black text-lg focus:outline-none focus:border-indigo-400 tracking-wide" />
+              <input type="number" step="any" min="0.01" inputmode="decimal" id="txAmount" required placeholder="0.00" class="w-full glass-input rounded-xl px-3.5 py-2.5 text-white font-black text-lg focus:outline-none focus:border-indigo-400 tracking-wide" />
             </div>
             <div>
               <label class="block text-xs text-slate-300 font-medium mb-1" data-i18n="curr_label">ငွေကြေး</label>
@@ -517,13 +517,13 @@
           <!-- Custom Category Input (Shows when Custom is selected) -->
           <div id="customCategoryBox" class="hidden">
             <label class="block text-xs text-indigo-300 font-bold mb-1">✏️ စိတ်ကြိုက် အမျိုးအစား ရိုက်ထည့်ပါ</label>
-            <input type="text" id="txCustomCategoryInput" placeholder="ဥပမာ- ရွှေဝယ်၊ ကားပြင်၊ အလှူငွေ..." class="w-full glass-input rounded-xl px-3 py-2 text-white text-xs focus:outline-none border-indigo-400/80" />
+            <input type="text" id="txCustomCategoryInput" maxlength="80" placeholder="ဥပမာ- ရွှေဝယ်၊ ကားပြင်၊ အလှူငွေ..." class="w-full glass-input rounded-xl px-3 py-2 text-white text-xs focus:outline-none border-indigo-400/80" />
           </div>
 
           <!-- Note -->
           <div>
             <label class="block text-xs text-slate-300 font-medium mb-1" data-i18n="note_label">မှတ်ချက် (စိတ်ကြိုက်)</label>
-            <input type="text" id="txNote" placeholder="အသေးစိတ် မှတ်လိုပါက ရေးပါ..." class="w-full glass-input rounded-xl px-3 py-2 text-white text-xs focus:outline-none focus:border-indigo-400" />
+            <input type="text" id="txNote" maxlength="240" placeholder="အသေးစိတ် မှတ်လိုပါက ရေးပါ..." class="w-full glass-input rounded-xl px-3 py-2 text-white text-xs focus:outline-none focus:border-indigo-400" />
           </div>
 
           <div class="pt-3 pb-8 sm:pb-0">
@@ -553,19 +553,19 @@
       <div class="space-y-2.5 text-xs">
         <div>
           <label class="text-slate-300 block mb-1">🍜 စားသောက်စရိတ်</label>
-          <input type="number" id="b_food" class="w-full glass-input rounded-xl px-3 py-2 text-white" />
+          <input type="number" id="b_food" min="0" step="any" inputmode="decimal" class="w-full glass-input rounded-xl px-3 py-2 text-white" />
         </div>
         <div>
           <label class="text-slate-300 block mb-1">🛍️ အဝတ်အထည်/ဈေးဝယ်</label>
-          <input type="number" id="b_shop" class="w-full glass-input rounded-xl px-3 py-2 text-white" />
+          <input type="number" id="b_shop" min="0" step="any" inputmode="decimal" class="w-full glass-input rounded-xl px-3 py-2 text-white" />
         </div>
         <div>
           <label class="text-slate-300 block mb-1">⛽ ခရီးစရိတ်/ဆီဖိုး</label>
-          <input type="number" id="b_travel" class="w-full glass-input rounded-xl px-3 py-2 text-white" />
+          <input type="number" id="b_travel" min="0" step="any" inputmode="decimal" class="w-full glass-input rounded-xl px-3 py-2 text-white" />
         </div>
         <div>
           <label class="text-slate-300 block mb-1">💡 ဖုန်းဘေလ်/မီတာခ</label>
-          <input type="number" id="b_bills" class="w-full glass-input rounded-xl px-3 py-2 text-white" />
+          <input type="number" id="b_bills" min="0" step="any" inputmode="decimal" class="w-full glass-input rounded-xl px-3 py-2 text-white" />
         </div>
       </div>
       <button onclick="saveBudgets()" class="w-full bg-indigo-600 font-bold py-2.5 rounded-xl text-xs text-white active:scale-95 transition" data-i18n="btn_save">သိမ်းဆည်းမည်</button>
@@ -582,12 +582,12 @@
       <div class="space-y-2.5 text-xs">
         <div>
           <label class="text-slate-300 block mb-1" data-i18n="rec_name">အမည် (ဥပမာ- အခန်းခ / WiFi ဖိုး)</label>
-          <input type="text" id="recTitle" class="w-full glass-input rounded-xl px-3 py-2 text-white" required />
+          <input type="text" id="recTitle" maxlength="100" class="w-full glass-input rounded-xl px-3 py-2 text-white" required />
         </div>
         <div class="grid grid-cols-2 gap-2">
           <div>
             <label class="text-slate-300 block mb-1" data-i18n="amount_label">ပမာဏ</label>
-            <input type="number" id="recAmount" class="w-full glass-input rounded-xl px-3 py-2 text-white" required />
+            <input type="number" id="recAmount" min="0.01" step="any" inputmode="decimal" class="w-full glass-input rounded-xl px-3 py-2 text-white" required />
           </div>
           <div>
             <label class="text-slate-300 block mb-1" data-i18n="curr_label">ငွေကြေး</label>
@@ -604,7 +604,18 @@
             <option value="Cash">Cash</option>
             <option value="KBZ Bank">KBZ Bank</option>
             <option value="WavePay">WavePay</option>
+            <option value="AYA Bank">AYA Bank</option>
+            <option value="uab Bank">uab Bank</option>
             <option value="Thai Bank">Thai Bank</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-slate-300 block mb-1">အမျိုးအစား / Category</label>
+          <select id="recCategory" class="w-full glass-input rounded-xl px-3 py-2 text-white">
+            <option value="🏠 အိမ်ငှား / နေထိုင်စရိတ် (Housing & Rent)">🏠 အိမ်ငှား / နေထိုင်စရိတ်</option>
+            <option value="🌐 အင်တာနက် / Subscription (Internet & Subscriptions)">🌐 အင်တာနက် / Subscription</option>
+            <option value="💡 ဖုန်းဘေလ် / မီတာခ (Bills & Utilities)">💡 ဖုန်းဘေလ် / မီတာခ</option>
+            <option value="📦 အထွေထွေ အသုံးစရိတ် (General)">📦 အထွေထွေ</option>
           </select>
         </div>
       </div>
@@ -615,9 +626,10 @@
   <!-- Firebase Scripts & Logic -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc, serverTimestamp } 
+    import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, serverTimestamp }
       from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+    // Firebase web config is intentionally client-visible. Protect data with Firebase Auth + restrictive Firestore Security Rules.
     const firebaseConfig = {
       apiKey: "AIzaSyBTe7OqqxOj95S6clKWQKHUK9dXQlb9BuU",
       authDomain: "my-personal-wallet-e7313.firebaseapp.com",
@@ -638,6 +650,8 @@
       "🛍️ အဝတ်အထည်နှင့်ဈေးဝယ် (Shopping)",
       "⛽ ခရီးစရိတ် / ဆီဖိုး (Transport)",
       "💡 ဖုန်းဘေလ် / မီတာခ (Bills & Utilities)",
+      "🏠 အိမ်ငှား / နေထိုင်စရိတ် (Housing & Rent)",
+      "🌐 အင်တာနက် / Subscription (Internet & Subscriptions)",
       "🛒 အိမ်သုံးစရိတ် / ကုန်စုံ (Groceries)",
       "💊 ကျန်းမာရေး / ဆေးဝါး (Healthcare)",
       "✨ အလှပြင် / Skincare (Personal Care)",
@@ -715,6 +729,56 @@
     let modalBudgetCurrency = 'MMK';
     let transactions = [];
     let isPrivate = localStorage.getItem('wallet_privacy') === 'true';
+    let syncState = 'connecting';
+    let toastTimer = null;
+
+    function escapeHtml(value) {
+      return String(value ?? '').replace(/[&<>"']/g, ch => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
+      })[ch]);
+    }
+
+    function safeJsonParse(raw, fallback) {
+      try {
+        const parsed = JSON.parse(raw);
+        return parsed ?? fallback;
+      } catch (_) {
+        return fallback;
+      }
+    }
+
+    function getLocalDateStr(date = new Date()) {
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, '0');
+      const d = String(date.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    }
+
+    function setSyncStatus(state) {
+      syncState = state;
+      const dot = document.getElementById('syncDot');
+      const text = document.getElementById('syncText');
+      if (!dot || !text) return;
+
+      if (state === 'active') {
+        dot.className = 'w-2 h-2 rounded-full bg-emerald-400';
+        text.innerText = currentLang === 'my' ? 'စာရင်း SYNC OK' : 'TRANSACTIONS SYNCED';
+      } else if (state === 'offline') {
+        dot.className = 'w-2 h-2 rounded-full bg-amber-400 animate-pulse';
+        text.innerText = currentLang === 'my' ? 'OFFLINE' : 'OFFLINE';
+      } else if (state === 'error') {
+        dot.className = 'w-2 h-2 rounded-full bg-rose-400';
+        text.innerText = currentLang === 'my' ? 'SYNC ERROR' : 'SYNC ERROR';
+      } else {
+        dot.className = 'w-2 h-2 rounded-full bg-amber-400 animate-pulse';
+        text.innerText = currentLang === 'my' ? 'ချိတ်ဆက်နေသည်...' : 'CONNECTING...';
+      }
+    }
+
+    function getRecurringBills() {
+      const bills = safeJsonParse(localStorage.getItem('wallet_recurring') || '[]', []);
+      return Array.isArray(bills) ? bills : [];
+    }
 
     // Populate Categories Dynamically
     window.populateCategories = function(type) {
@@ -745,6 +809,7 @@
       renderAnalytics();
       renderBudgets();
       renderRecurring();
+      setSyncStatus(syncState);
       showToast(currentLang === 'my' ? "မြန်မာဘာသာသို့ ပြောင်းလဲပြီးပါပြီ" : "Switched to English");
     };
 
@@ -761,6 +826,7 @@
     // PIN State
     let enteredPin = "";
     let isSetupMode = !localStorage.getItem('wallet_pin');
+    let setupFirstPin = "";
 
     function updatePinUI() {
       for (let i = 0; i < 4; i++) {
@@ -774,8 +840,13 @@
       const title = document.getElementById("pinTitle");
       const sub = document.getElementById("pinSub");
       if (isSetupMode) {
-        title.innerText = currentLang === 'my' ? "PIN အသစ် သတ်မှတ်ပါ" : "Set New PIN";
-        sub.innerText = currentLang === 'my' ? "ဂဏန်း ၄ လုံး ရိုက်ထည့်ပါ" : "Enter a 4-digit PIN code";
+        if (setupFirstPin) {
+          title.innerText = currentLang === 'my' ? "PIN ကို ထပ်မံအတည်ပြုပါ" : "Confirm New PIN";
+          sub.innerText = currentLang === 'my' ? "တူညီသော PIN ၄ လုံးကို ထပ်ရိုက်ပါ" : "Enter the same 4-digit PIN again";
+        } else {
+          title.innerText = currentLang === 'my' ? "PIN အသစ် သတ်မှတ်ပါ" : "Set New PIN";
+          sub.innerText = currentLang === 'my' ? "ဂဏန်း ၄ လုံး ရိုက်ထည့်ပါ" : "Enter a 4-digit PIN code";
+        }
       } else {
         title.innerText = currentLang === 'my' ? "PIN နံပါတ် ရိုက်ထည့်ပါ" : "Enter PIN";
         sub.innerText = currentLang === 'my' ? "App ကို လုံခြုံစွာ ဖွင့်ရန် PIN လိုအပ်ပါသည်" : "Enter PIN to access your wallet";
@@ -799,8 +870,26 @@
 
     function verifyPin() {
       if (isSetupMode) {
+        if (!setupFirstPin) {
+          setupFirstPin = enteredPin;
+          enteredPin = "";
+          updatePinUI();
+          showToast(currentLang === 'my' ? "PIN ကို တစ်ကြိမ် ထပ်အတည်ပြုပါ" : "Confirm your PIN once more");
+          return;
+        }
+
+        if (enteredPin !== setupFirstPin) {
+          triggerHaptic(50);
+          setupFirstPin = "";
+          enteredPin = "";
+          updatePinUI();
+          showToast(currentLang === 'my' ? "PIN နှစ်ကြိမ် မတူပါ။ ပြန်သတ်မှတ်ပါ" : "PINs do not match. Try again.", true);
+          return;
+        }
+
         localStorage.setItem('wallet_pin', enteredPin);
         isSetupMode = false;
+        setupFirstPin = "";
         enteredPin = "";
         document.getElementById("pinOverlay").classList.add("hidden");
         showToast(currentLang === 'my' ? "PIN အသစ် သတ်မှတ်ပြီးပါပြီ" : "PIN set successfully");
@@ -831,6 +920,7 @@
       if (verify === current) {
         localStorage.removeItem('wallet_pin');
         isSetupMode = true;
+        setupFirstPin = "";
         enteredPin = "";
         updatePinUI();
         showToast(currentLang === 'my' ? "PIN အသစ် သတ်မှတ်ပေးပါ" : "Please set a new PIN");
@@ -851,20 +941,36 @@
       toastMsg.innerText = msg;
       toastIcon.className = isError ? "fa-solid fa-circle-exclamation text-rose-400 text-sm" : "fa-solid fa-circle-check text-emerald-400 text-sm";
       toast.classList.remove("-translate-y-20", "opacity-0");
-      setTimeout(() => toast.classList.add("-translate-y-20", "opacity-0"), 2500);
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.add("-translate-y-20", "opacity-0"), 2500);
     }
 
-    document.getElementById("txDate").value = new Date().toISOString().split('T')[0];
+    document.getElementById("txDate").value = getLocalDateStr();
 
-    // Real-time Firestore Sync
-    const q = query(txCollection, orderBy("createdAt", "desc"));
-    onSnapshot(q, (snapshot) => {
+    // Real-time Firestore Sync. Sort locally so older documents without createdAt are not hidden.
+    setSyncStatus('connecting');
+    onSnapshot(txCollection, (snapshot) => {
       transactions = [];
       snapshot.forEach(docSnap => transactions.push({ id: docSnap.id, ...docSnap.data() }));
+      transactions.sort((a, b) => {
+        const dateCmp = String(b.dateStr || '').localeCompare(String(a.dateStr || ''));
+        if (dateCmp !== 0) return dateCmp;
+        const aSec = a.createdAt?.seconds || 0;
+        const bSec = b.createdAt?.seconds || 0;
+        return bSec - aSec;
+      });
+      setSyncStatus(navigator.onLine ? 'active' : 'offline');
       render();
       renderAnalytics();
       renderBudgets();
-    }, (err) => console.error("Firestore error:", err));
+    }, (err) => {
+      console.error("Firestore error:", err);
+      setSyncStatus(navigator.onLine ? 'error' : 'offline');
+      showToast(currentLang === 'my' ? "Cloud sync ချိတ်ဆက်မှု မအောင်မြင်ပါ" : "Cloud sync failed", true);
+    });
+
+    window.addEventListener('offline', () => setSyncStatus('offline'));
+    window.addEventListener('online', () => setSyncStatus('connecting'));
 
     window.switchTab = function(tab) {
       triggerHaptic(12);
@@ -958,7 +1064,7 @@
     window.closeModal = function() {
       document.getElementById("txModal").classList.add("hidden");
       document.getElementById("txForm").reset();
-      document.getElementById("txDate").value = new Date().toISOString().split('T')[0];
+      document.getElementById("txDate").value = getLocalDateStr();
       document.getElementById("customCategoryBox").classList.add("hidden");
       setType('expense');
     };
@@ -988,6 +1094,31 @@
       const currency = document.getElementById("txCurrency").value;
       const customDate = document.getElementById("txDate").value;
       const note = document.getElementById("txNote").value.trim();
+
+      if (!Number.isFinite(amount) || amount <= 0) {
+        showToast(currentLang === 'my' ? "ပမာဏကို 0 ထက်ကြီးသော ကိန်းဂဏန်း ထည့်ပါ" : "Enter an amount greater than 0", true);
+        saveBtn.disabled = false;
+        saveBtn.innerText = translations[currentLang].btn_save;
+        return;
+      }
+
+      if (!customDate) {
+        showToast(currentLang === 'my' ? "ရက်စွဲ ရွေးပါ" : "Choose a date", true);
+        saveBtn.disabled = false;
+        saveBtn.innerText = translations[currentLang].btn_save;
+        return;
+      }
+
+      if (currentType === 'transfer') {
+        const from = document.getElementById("txFromAccount").value;
+        const to = document.getElementById("txToAccount").value;
+        if (from === to) {
+          showToast(currentLang === 'my' ? "လွှဲထုတ်/လက်ခံ အကောင့် တူနေ၍ မရပါ" : "Transfer accounts must be different", true);
+          saveBtn.disabled = false;
+          saveBtn.innerText = translations[currentLang].btn_save;
+          return;
+        }
+      }
 
       const docData = {
         type: currentType,
@@ -1042,21 +1173,38 @@
         showToast(currentLang === 'my' ? "မှတ်တမ်း မရှိသေးပါ" : "No records", true);
         return;
       }
-      let csv = "data:text/csv;charset=utf-8,ID,Date,Type,Amount,Currency,Account,From,To,Category,Note\n";
-      transactions.forEach(t => {
-        csv += `"${t.id}","${t.dateStr || ''}","${t.type}","${t.amount}","${t.currency}","${t.account || ''}","${t.fromAccount || ''}","${t.toAccount || ''}","${t.category}","${t.note || ''}"\n`;
-      });
-      const link = document.createElement("a");
-      link.href = encodeURI(csv);
-      link.download = `Wallet_Export_${new Date().toISOString().slice(0,10)}.csv`;
+
+      const csvCell = (value) => {
+        let text = String(value ?? '');
+        // Prevent spreadsheet formula injection when opening the CSV in Excel/Sheets.
+        if (/^[=+\-@]/.test(text)) text = "'" + text;
+        return `"${text.replace(/"/g, '""')}"`;
+      };
+
+      const rows = [
+        ['ID', 'Date', 'Type', 'Amount', 'Currency', 'Account', 'From', 'To', 'Category', 'Note'],
+        ...transactions.map(t => [
+          t.id, t.dateStr || '', t.type || '', Number(t.amount) || 0, t.currency || '',
+          t.account || '', t.fromAccount || '', t.toAccount || '', t.category || '', t.note || ''
+        ])
+      ];
+
+      const csv = rows.map(row => row.map(csvCell).join(',')).join('\r\n');
+      const blob = new Blob(['\uFEFF', csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `Wallet_Export_${getLocalDateStr()}.csv`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      showToast("CSV Downloaded");
+      setTimeout(() => URL.revokeObjectURL(url), 0);
+      showToast(currentLang === 'my' ? "CSV ဖိုင် ထုတ်ယူပြီးပါပြီ" : "CSV downloaded");
     };
 
     window.calculateConvert = function(source) {
-      const rate = parseFloat(document.getElementById("convRate").value) || 1;
+      const parsedRate = parseFloat(document.getElementById("convRate").value);
+      const rate = Number.isFinite(parsedRate) && parsedRate > 0 ? parsedRate : 1;
       const thbIn = document.getElementById("convTHB");
       const mmkIn = document.getElementById("convMMK");
 
@@ -1076,7 +1224,17 @@
     };
 
     function getSavedBudgets() {
-      return JSON.parse(localStorage.getItem('wallet_dual_budgets')) || defaultDualBudgets;
+      const saved = safeJsonParse(localStorage.getItem('wallet_dual_budgets') || 'null', null);
+      const clone = JSON.parse(JSON.stringify(defaultDualBudgets));
+      if (!saved || typeof saved !== 'object') return clone;
+      for (const curr of ['MMK', 'THB']) {
+        if (!saved[curr] || typeof saved[curr] !== 'object') continue;
+        for (const key of ['food', 'shop', 'travel', 'bills']) {
+          const value = Number(saved[curr][key]);
+          if (Number.isFinite(value) && value >= 0) clone[curr][key] = value;
+        }
+      }
+      return clone;
     }
 
     window.setBudgetCurrency = function(curr) {
@@ -1129,10 +1287,10 @@
     window.saveBudgets = function() {
       const allBudgets = getSavedBudgets();
       allBudgets[modalBudgetCurrency] = {
-        food: parseFloat(document.getElementById("b_food").value) || 0,
-        shop: parseFloat(document.getElementById("b_shop").value) || 0,
-        travel: parseFloat(document.getElementById("b_travel").value) || 0,
-        bills: parseFloat(document.getElementById("b_bills").value) || 0
+        food: Math.max(0, parseFloat(document.getElementById("b_food").value) || 0),
+        shop: Math.max(0, parseFloat(document.getElementById("b_shop").value) || 0),
+        travel: Math.max(0, parseFloat(document.getElementById("b_travel").value) || 0),
+        bills: Math.max(0, parseFloat(document.getElementById("b_bills").value) || 0)
       };
       localStorage.setItem('wallet_dual_budgets', JSON.stringify(allBudgets));
       closeBudgetModal();
@@ -1142,14 +1300,17 @@
 
     function renderBudgets() {
       const budgets = getSavedBudgets()[budgetDisplayCurrency] || defaultDualBudgets[budgetDisplayCurrency];
-      const currentMonth = new Date().toISOString().slice(0, 7);
+      const currentMonth = getLocalDateStr().slice(0, 7);
       const catSpent = { "စားသောက်စရိတ်": 0, "အဝတ်အထည်နှင့်ဈေးဝယ်": 0, "ခရီးစရိတ်/ဆီဖိုး": 0, "ဖုန်းဘေလ်/မီတာခ": 0 };
 
       transactions.filter(t => t.type === 'expense' && (t.dateStr || '').startsWith(currentMonth) && t.currency === budgetDisplayCurrency)
         .forEach(t => {
-          for (let k in catSpent) {
-            if ((t.category || '').includes(k)) catSpent[k] += Number(t.amount) || 0;
-          }
+          const cat = String(t.category || '');
+          const amount = Number(t.amount) || 0;
+          if (cat.includes('စားသောက်စရိတ်') || cat.includes('Food & Drink')) catSpent["စားသောက်စရိတ်"] += amount;
+          else if (cat.includes('အဝတ်အထည်') || cat.includes('Shopping')) catSpent["အဝတ်အထည်နှင့်ဈေးဝယ်"] += amount;
+          else if (cat.includes('ခရီးစရိတ်') || cat.includes('ဆီဖိုး') || cat.includes('Transport')) catSpent["ခရီးစရိတ်/ဆီဖိုး"] += amount;
+          else if (cat.includes('ဖုန်းဘေလ်') || cat.includes('မီတာခ') || cat.includes('Bills & Utilities')) catSpent["ဖုန်းဘေလ်/မီတာခ"] += amount;
         });
 
       const currSymbol = budgetDisplayCurrency === 'MMK' ? 'K' : '฿';
@@ -1192,15 +1353,20 @@
     window.openRecurringModal = function() { document.getElementById("recurringModal").classList.remove("hidden"); };
     window.closeRecurringModal = function() { document.getElementById("recurringModal").classList.add("hidden"); };
     window.saveRecurringBill = function() {
-      const bills = JSON.parse(localStorage.getItem('wallet_recurring') || '[]');
+      const bills = getRecurringBills();
       const newBill = {
         id: Date.now().toString(),
         title: document.getElementById("recTitle").value.trim(),
         amount: parseFloat(document.getElementById("recAmount").value) || 0,
         currency: document.getElementById("recCurrency").value,
-        account: document.getElementById("recAccount").value
+        account: document.getElementById("recAccount").value,
+        category: document.getElementById("recCategory").value,
+        lastPaidDate: ''
       };
-      if (!newBill.title || !newBill.amount) return;
+      if (!newBill.title || !Number.isFinite(newBill.amount) || newBill.amount <= 0) {
+        showToast(currentLang === 'my' ? "အမည်နှင့် မှန်ကန်သော ပမာဏ ထည့်ပါ" : "Enter a name and valid amount", true);
+        return;
+      }
       bills.push(newBill);
       localStorage.setItem('wallet_recurring', JSON.stringify(bills));
       closeRecurringModal();
@@ -1212,9 +1378,15 @@
 
     window.payRecurringBill = async function(id) {
       triggerHaptic(15);
-      const bills = JSON.parse(localStorage.getItem('wallet_recurring') || '[]');
+      const bills = getRecurringBills();
       const bill = bills.find(b => b.id === id);
       if (!bill) return;
+
+      const today = getLocalDateStr();
+      if (bill.lastPaidDate === today) {
+        const again = confirm(currentLang === 'my' ? "ဒီစာရင်းကို ယနေ့ တစ်ကြိမ်သွင်းပြီးပါပြီ။ ထပ်သွင်းမလား?" : "This bill was already recorded today. Record it again?");
+        if (!again) return;
+      }
 
       try {
         await addDoc(txCollection, {
@@ -1222,34 +1394,37 @@
           amount: bill.amount,
           currency: bill.currency,
           account: bill.account,
-          category: '💡 ဖုန်းဘေလ် / မီတာခ (Bills & Utilities)',
+          category: bill.category || '📦 အထွေထွေ အသုံးစရိတ် (General)',
           note: `[Recurring] ${bill.title}`,
-          dateStr: new Date().toISOString().split('T')[0],
+          dateStr: today,
           createdAt: serverTimestamp()
         });
+        bill.lastPaidDate = today;
+        localStorage.setItem('wallet_recurring', JSON.stringify(bills));
+        renderRecurring();
         showToast(currentLang === 'my' ? "စာရင်းသွင်းပြီးပါပြီ" : "Paid & Recorded");
       } catch(e) { showToast("Error", true); }
     };
 
     window.deleteRecurringBill = function(id) {
-      let bills = JSON.parse(localStorage.getItem('wallet_recurring') || '[]');
+      let bills = getRecurringBills();
       bills = bills.filter(b => b.id !== id);
       localStorage.setItem('wallet_recurring', JSON.stringify(bills));
       renderRecurring();
     };
 
     function renderRecurring() {
-      const bills = JSON.parse(localStorage.getItem('wallet_recurring') || '[]');
+      const bills = getRecurringBills();
       const listEl = document.getElementById("recurringBillsList");
       if (bills.length === 0) {
-        listEl.innerHTML = `<div class="text-center py-4 text-xs text-slate-500">ပုံမှန်ပေးချေရမည့် စာရင်း မရှိသေးပါ။</div>`;
+        listEl.innerHTML = `<div class="text-center py-4 text-xs text-slate-500">${currentLang === 'my' ? 'ပုံမှန်ပေးချေရမည့် စာရင်း မရှိသေးပါ။' : 'No recurring bills yet.'}</div>`;
         return;
       }
       listEl.innerHTML = bills.map(b => `
         <div class="glass-pill rounded-xl p-2.5 flex items-center justify-between text-xs">
           <div>
-            <div class="font-bold text-white">${b.title}</div>
-            <div class="text-[10px] text-slate-400">${b.account} • <span class="text-amber-300 font-bold">${b.amount.toLocaleString()} ${b.currency}</span></div>
+            <div class="font-bold text-white">${escapeHtml(b.title)}</div>
+            <div class="text-[10px] text-slate-400">${escapeHtml(b.account)} • <span class="text-amber-300 font-bold">${(Number(b.amount) || 0).toLocaleString()} ${escapeHtml(b.currency)}</span>${b.lastPaidDate ? ` • ${currentLang === 'my' ? 'နောက်ဆုံး' : 'Last'}: ${escapeHtml(b.lastPaidDate)}` : ''}</div>
           </div>
           <div class="flex items-center gap-1.5">
             <button onclick="payRecurringBill('${b.id}')" class="px-2.5 py-1 rounded-lg bg-emerald-600/30 text-emerald-300 border border-emerald-500/40 text-[10px] font-bold active:scale-95 transition">
@@ -1268,17 +1443,22 @@
       if (activeTimeframe === 'all') return txs;
       const now = new Date();
       if (activeTimeframe === 'month') {
-        const ym = now.toISOString().slice(0, 7);
-        return txs.filter(t => (t.dateStr || '').startsWith(ym));
+        const ym = getLocalDateStr(now).slice(0, 7);
+        return txs.filter(t => String(t.dateStr || '').startsWith(ym));
       } else if (activeTimeframe === 'week') {
-        const sevenDaysAgo = new Date();
-        sevenDaysAgo.setDate(now.getDate() - 7);
-        return txs.filter(t => t.dateStr && new Date(t.dateStr) >= sevenDaysAgo && new Date(t.dateStr) <= now);
+        const start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const daysFromMonday = (start.getDay() + 6) % 7;
+        start.setDate(start.getDate() - daysFromMonday);
+        const startStr = getLocalDateStr(start);
+        const todayStr = getLocalDateStr(now);
+        return txs.filter(t => t.dateStr && t.dateStr >= startStr && t.dateStr <= todayStr);
       } else if (activeTimeframe === 'custom') {
         const s = document.getElementById("filterStartDate").value;
         const e = document.getElementById("filterEndDate").value;
         if (!s || !e) return txs;
-        return txs.filter(t => t.dateStr && t.dateStr >= s && t.dateStr <= e);
+        const startStr = s <= e ? s : e;
+        const endStr = s <= e ? e : s;
+        return txs.filter(t => t.dateStr && t.dateStr >= startStr && t.dateStr <= endStr);
       }
       return txs;
     }
@@ -1292,7 +1472,7 @@
       else titleEl.innerText = currentLang === 'my' ? "ကာလအားလုံး အနှစ်ချုပ် Report" : "All-Time Financial Report";
 
       let incM = 0, expM = 0, incT = 0, expT = 0;
-      const categoryMap = {};
+      const categoryMap = Object.create(null);
       const expenseItems = [];
 
       filteredTxs.forEach(t => {
@@ -1330,7 +1510,7 @@
           return `
             <div class="space-y-1.5">
               <div class="flex items-center justify-between text-xs sm:text-sm">
-                <span class="font-bold text-slate-200">${cat}</span>
+                <span class="font-bold text-slate-200">${escapeHtml(cat)}</span>
                 <span class="font-black text-white">${amt.toLocaleString()} <span class="text-[10px] text-slate-400 font-normal">(${pct}%)</span></span>
               </div>
               <div class="w-full h-2 rounded-full bg-white/10 overflow-hidden">
@@ -1351,15 +1531,18 @@
             <div class="flex items-center gap-2.5">
               <span class="w-5 h-5 rounded-full bg-rose-500/20 text-rose-300 font-black text-[10px] flex items-center justify-center">#${idx + 1}</span>
               <div>
-                <div class="text-xs sm:text-sm font-bold text-white">${item.category}</div>
-                <div class="text-[10px] text-slate-400">${item.dateStr || ''} • ${item.account || ''} ${item.note ? `• ${item.note}` : ''}</div>
+                <div class="text-xs sm:text-sm font-bold text-white">${escapeHtml(item.category)}</div>
+                <div class="text-[10px] text-slate-400">${escapeHtml(item.dateStr || '')} • ${escapeHtml(item.account || '')} ${item.note ? `• ${escapeHtml(item.note)}` : ''}</div>
               </div>
             </div>
-            <span class="font-black text-xs sm:text-sm text-rose-400">-${(item.amount || 0).toLocaleString()} <span class="text-[9px] font-normal text-slate-400">${item.currency}</span></span>
+            <span class="font-black text-xs sm:text-sm text-rose-400">-${(Number(item.amount) || 0).toLocaleString()} <span class="text-[9px] font-normal text-slate-400">${escapeHtml(item.currency)}</span></span>
           </div>
         `).join('');
       }
     }
+
+    // Expose for the date inputs' inline onchange handlers (module functions are not global by default).
+    window.renderAnalytics = renderAnalytics;
 
     // Main Render
     function render() {
@@ -1419,26 +1602,23 @@
         `;
       }).join('');
 
-      const searchQuery = (document.getElementById("searchInput") ? document.getElementById("searchInput").value : '').toLowerCase();
+      const searchQuery = (document.getElementById("searchInput") ? document.getElementById("searchInput").value : '').trim().toLowerCase();
       const filtered = transactions.filter(t => {
         const matchesFilter = (activeFilter === 'all') || (t.type === activeFilter);
-        const matchesSearch = !searchQuery || 
-          (t.category && t.category.toLowerCase().includes(searchQuery)) ||
-          (t.note && t.note.toLowerCase().includes(searchQuery)) ||
-          (t.account && t.account.toLowerCase().includes(searchQuery)) ||
-          (t.fromAccount && t.fromAccount.toLowerCase().includes(searchQuery)) ||
-          (t.toAccount && t.toAccount.toLowerCase().includes(searchQuery));
+        const haystack = [t.category, t.note, t.account, t.fromAccount, t.toAccount, t.dateStr, t.currency]
+          .map(v => String(v || '').toLowerCase());
+        const matchesSearch = !searchQuery || haystack.some(v => v.includes(searchQuery));
         return matchesFilter && matchesSearch;
       });
 
-      document.getElementById("txCount").innerText = `${filtered.length} စာရင်း`;
+      document.getElementById("txCount").innerText = currentLang === 'my' ? `${filtered.length} စာရင်း` : `${filtered.length} records`;
       const listEl = document.getElementById("txList");
 
       if (filtered.length === 0) {
         listEl.innerHTML = `
           <div class="glass-surface rounded-3xl py-12 text-center text-slate-500 text-xs">
             <i class="fa-solid fa-magnifying-glass text-2xl mb-2 block text-slate-600"></i>
-            ရှာဖွေထားသော မှတ်တမ်း မရှိပါ။
+            ${currentLang === 'my' ? 'ရှာဖွေထားသော မှတ်တမ်း မရှိပါ။' : 'No matching transactions found.'}
           </div>
         `;
         return;
@@ -1452,34 +1632,34 @@
         let bgIcon = isExp ? 'bg-rose-500/15 text-rose-300 border border-rose-500/25' : 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/25';
         let icon = isExp ? 'fa-arrow-trend-down' : 'fa-arrow-trend-up';
 
-        let subLine = `<span class="glass-pill px-2 py-0.5 rounded-md text-[10px] text-slate-300 font-semibold">${item.account || 'Cash'}</span>`;
+        let subLine = `<span class="glass-pill px-2 py-0.5 rounded-md text-[10px] text-slate-300 font-semibold">${escapeHtml(item.account || 'Cash')}</span>`;
 
         if (isTra) {
           sign = '⇄ ';
           colorClass = 'text-indigo-300';
           bgIcon = 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30';
           icon = 'fa-right-left';
-          subLine = `<span class="glass-pill px-2 py-0.5 rounded-md text-[10px] text-indigo-200 font-semibold">${item.fromAccount} ➔ ${item.toAccount}</span>`;
+          subLine = `<span class="glass-pill px-2 py-0.5 rounded-md text-[10px] text-indigo-200 font-semibold">${escapeHtml(item.fromAccount)} ➔ ${escapeHtml(item.toAccount)}</span>`;
         }
 
         return `
-          <div class="glass-surface hover:bg-white/[0.08] active:scale-[0.99] transition-all rounded-2xl p-3.5 sm:p-4 flex items-center justify-between">
-            <div class="flex items-center gap-3">
+          <div class="glass-surface hover:bg-white/[0.08] active:scale-[0.99] transition-all rounded-2xl p-3.5 sm:p-4 flex items-center justify-between gap-2">
+            <div class="flex items-center gap-3 min-w-0">
               <div class="w-10 h-10 rounded-2xl ${bgIcon} flex items-center justify-center text-sm shrink-0 shadow-inner">
                 <i class="fa-solid ${icon}"></i>
               </div>
-              <div>
-                <div class="font-extrabold text-xs sm:text-sm text-white tracking-tight">${item.category}</div>
-                <div class="text-[11px] text-slate-400 flex items-center gap-2 mt-0.5 flex-wrap">
+              <div class="min-w-0">
+                <div class="font-extrabold text-xs sm:text-sm text-white tracking-tight break-words">${escapeHtml(item.category)}</div>
+                <div class="text-[11px] text-slate-400 flex items-center gap-2 mt-0.5 flex-wrap min-w-0">
                   ${subLine}
-                  <span>${item.dateStr || ''}</span>
-                  ${item.note ? `<span class="italic text-slate-400">• ${item.note}</span>` : ''}
+                  <span>${escapeHtml(item.dateStr || '')}</span>
+                  ${item.note ? `<span class="italic text-slate-400 break-words">• ${escapeHtml(item.note)}</span>` : ''}
                 </div>
               </div>
             </div>
             <div class="flex items-center gap-2.5">
               <span class="font-black text-xs sm:text-sm ${colorClass} tracking-tight">
-                ${sign}${isPrivate ? '••••' : (item.amount || 0).toLocaleString()} <span class="text-[10px] font-normal text-slate-400">${item.currency}</span>
+                ${sign}${isPrivate ? '••••' : (Number(item.amount) || 0).toLocaleString()} <span class="text-[10px] font-normal text-slate-400">${escapeHtml(item.currency)}</span>
               </span>
               <button onclick="deleteTx('${item.id}')" class="w-7 h-7 rounded-full glass-pill flex items-center justify-center text-slate-500 hover:text-rose-400 active:scale-90 transition">
                 <i class="fa-solid fa-trash-can text-[10px]"></i>
