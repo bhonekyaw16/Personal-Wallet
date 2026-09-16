@@ -79,6 +79,50 @@
   <div class="fixed top-[35%] right-[-15%] w-[400px] h-[400px] rounded-full bg-cyan-500/15 blur-[140px] pointer-events-none"></div>
   <div class="fixed bottom-[-5%] left-[20%] w-[450px] h-[450px] rounded-full bg-emerald-600/15 blur-[140px] pointer-events-none"></div>
 
+  <!-- FIREBASE AUTH LOGIN OVERLAY -->
+  <div id="authOverlay" class="fixed inset-0 z-[70] bg-[#04060d]/98 backdrop-blur-3xl flex items-center justify-center px-5 py-8">
+    <div class="w-full max-w-sm glass-surface rounded-[28px] p-6 sm:p-7 shadow-2xl border border-white/10">
+      <div class="text-center mb-6">
+        <div class="w-16 h-16 rounded-3xl glass-card-glow mx-auto flex items-center justify-center text-indigo-400 text-2xl shadow-xl shadow-indigo-500/20 mb-3">
+          <i class="fa-solid fa-cloud-shield"></i>
+        </div>
+        <h2 class="text-base font-extrabold text-white tracking-wide" data-i18n="auth_title">Cloud အကောင့်ဝင်ရန်</h2>
+        <p class="text-xs text-slate-400 mt-1 leading-5" data-i18n="auth_sub">Firebase အကောင့်ဖြင့် အတည်ပြုပြီးမှ Wallet data ကို Sync လုပ်ပါမည်</p>
+      </div>
+
+      <form id="authForm" onsubmit="loginFirebase(event)" class="space-y-3.5">
+        <div>
+          <label for="authEmail" class="block text-xs text-slate-300 font-semibold mb-1.5" data-i18n="auth_email">Email</label>
+          <div class="relative">
+            <i class="fa-regular fa-envelope absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
+            <input type="email" id="authEmail" autocomplete="username" inputmode="email" required placeholder="name@example.com" class="w-full glass-input rounded-xl pl-10 pr-3 py-2.5 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-indigo-400" />
+          </div>
+        </div>
+        <div>
+          <label for="authPassword" class="block text-xs text-slate-300 font-semibold mb-1.5" data-i18n="auth_password">Password</label>
+          <div class="relative">
+            <i class="fa-solid fa-key absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
+            <input type="password" id="authPassword" autocomplete="current-password" required minlength="6" placeholder="••••••••" class="w-full glass-input rounded-xl pl-10 pr-10 py-2.5 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-indigo-400" />
+            <button type="button" onclick="toggleAuthPassword()" aria-label="Show or hide password" class="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg text-slate-500 hover:text-white active:scale-90 transition">
+              <i id="authPasswordIcon" class="fa-regular fa-eye text-xs"></i>
+            </button>
+          </div>
+        </div>
+
+        <div id="authError" class="hidden rounded-xl border border-rose-500/30 bg-rose-500/10 px-3 py-2 text-[11px] leading-5 text-rose-300"></div>
+
+        <button type="submit" id="authLoginBtn" class="w-full bg-gradient-to-r from-indigo-500 via-blue-600 to-indigo-600 hover:opacity-90 text-white font-bold py-3 rounded-2xl transition shadow-lg shadow-indigo-500/25 active:scale-[0.98] text-sm" data-i18n="auth_login">
+          Firebase အကောင့်ဝင်မည်
+        </button>
+      </form>
+
+      <div class="mt-4 pt-4 border-t border-white/10 flex items-start gap-2 text-[10px] leading-4 text-slate-500">
+        <i class="fa-solid fa-lock mt-0.5 text-emerald-400"></i>
+        <span data-i18n="auth_note">Password ကို Wallet code ထဲတွင် မသိမ်းပါ။ Firebase Authentication က session ကို စီမံပေးပါမည်။</span>
+      </div>
+    </div>
+  </div>
+
   <!-- PIN LOCK SCREEN OVERLAY -->
   <div id="pinOverlay" class="fixed inset-0 z-50 bg-[#04060d]/95 backdrop-blur-3xl flex flex-col items-center justify-center px-6 transition-all duration-300">
     <div class="text-center mb-8">
@@ -143,6 +187,9 @@
         </button>
         <button onclick="exportToCSV()" title="Export CSV" class="w-8 h-8 rounded-xl glass-pill hover:bg-white/15 active:scale-95 transition flex items-center justify-center text-slate-300">
           <i class="fa-solid fa-file-csv text-[11px]"></i>
+        </button>
+        <button onclick="logoutFirebase()" title="Firebase Logout" class="w-8 h-8 rounded-xl glass-pill hover:bg-white/15 active:scale-95 transition flex items-center justify-center text-rose-300">
+          <i class="fa-solid fa-right-from-bracket text-[11px]"></i>
         </button>
       </div>
     </div>
@@ -628,6 +675,8 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, serverTimestamp }
       from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, setPersistence, browserLocalPersistence, signOut }
+      from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
     // Firebase web config is intentionally client-visible. Protect data with Firebase Auth + restrictive Firestore Security Rules.
     const firebaseConfig = {
@@ -642,6 +691,7 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    const auth = getAuth(app);
     const txCollection = collection(db, "transactions");
 
     // Comprehensive Separated Category Lists
@@ -695,7 +745,10 @@
         from_acc_label: "လွှဲထုတ်မည့်အကောင့်", to_acc_label: "လက်ခံမည့်အကောင့်", cat_label: "အမျိုးအစား",
         note_label: "မှတ်ချက် (စိတ်ကြိုက်)", btn_save: "စာရင်း အတည်ပြုသိမ်းဆည်းမည်",
         budget_modal_title: "လစဉ် Budget သတ်မှတ်ရန်", rec_modal_title: "ပုံမှန်ပေးချေစရိတ် အသစ်ထည့်ရန်",
-        rec_name: "အမည် (ဥပမာ- အခန်းခ / WiFi ဖိုး)"
+        rec_name: "အမည် (ဥပမာ- အခန်းခ / WiFi ဖိုး)",
+        auth_title: "Cloud အကောင့်ဝင်ရန်", auth_sub: "Firebase အကောင့်ဖြင့် အတည်ပြုပြီးမှ Wallet data ကို Sync လုပ်ပါမည်",
+        auth_email: "Email", auth_password: "Password", auth_login: "Firebase အကောင့်ဝင်မည်",
+        auth_note: "Password ကို Wallet code ထဲတွင် မသိမ်းပါ။ Firebase Authentication က session ကို စီမံပေးပါမည်။"
       },
       en: {
         balance_mmk: "Kyats (MMK)", balance_thb: "Baht (THB)", wallets: "Accounts / Wallets",
@@ -716,7 +769,10 @@
         from_acc_label: "Transfer From", to_acc_label: "Transfer To", cat_label: "Category",
         note_label: "Note (Optional)", btn_save: "Confirm & Save",
         budget_modal_title: "Set Monthly Budgets", rec_modal_title: "New Recurring Bill",
-        rec_name: "Bill Name (e.g. Rent / WiFi)"
+        rec_name: "Bill Name (e.g. Rent / WiFi)",
+        auth_title: "Sign in to Cloud", auth_sub: "Authenticate with Firebase before wallet data is synced",
+        auth_email: "Email", auth_password: "Password", auth_login: "Sign in with Firebase",
+        auth_note: "Your password is never stored in this wallet code. Firebase Authentication manages the session."
       }
     };
 
@@ -731,6 +787,8 @@
     let isPrivate = localStorage.getItem('wallet_privacy') === 'true';
     let syncState = 'connecting';
     let toastTimer = null;
+    let currentUser = null;
+    let unsubscribeTransactions = null;
 
     function escapeHtml(value) {
       return String(value ?? '').replace(/[&<>"']/g, ch => ({
@@ -763,6 +821,9 @@
       if (state === 'active') {
         dot.className = 'w-2 h-2 rounded-full bg-emerald-400';
         text.innerText = currentLang === 'my' ? 'စာရင်း SYNC OK' : 'TRANSACTIONS SYNCED';
+      } else if (state === 'auth') {
+        dot.className = 'w-2 h-2 rounded-full bg-slate-500';
+        text.innerText = currentLang === 'my' ? 'အကောင့်ဝင်ရန်လိုသည်' : 'SIGN IN REQUIRED';
       } else if (state === 'offline') {
         dot.className = 'w-2 h-2 rounded-full bg-amber-400 animate-pulse';
         text.innerText = currentLang === 'my' ? 'OFFLINE' : 'OFFLINE';
@@ -822,6 +883,94 @@
       document.getElementById('langText').innerText = currentLang === 'my' ? 'EN' : 'မြန်မာ';
     }
     applyLangDOM();
+
+    // Firebase Authentication (Email/Password)
+    function setAuthError(message = '') {
+      const box = document.getElementById('authError');
+      if (!box) return;
+      if (!message) {
+        box.textContent = '';
+        box.classList.add('hidden');
+      } else {
+        box.textContent = message;
+        box.classList.remove('hidden');
+      }
+    }
+
+    function authErrorMessage(error) {
+      const code = error?.code || '';
+      if (code === 'auth/invalid-credential' || code === 'auth/wrong-password' || code === 'auth/user-not-found') {
+        return currentLang === 'my' ? 'Email သို့မဟုတ် Password မမှန်ပါ။' : 'Incorrect email or password.';
+      }
+      if (code === 'auth/too-many-requests') {
+        return currentLang === 'my' ? 'အကြိမ်များစွာ ကြိုးစားထားပါသည်။ ခဏစောင့်ပြီး ပြန်စမ်းပါ။' : 'Too many attempts. Please wait and try again.';
+      }
+      if (code === 'auth/network-request-failed') {
+        return currentLang === 'my' ? 'Internet ချိတ်ဆက်မှုကို စစ်ဆေးပါ။' : 'Check your internet connection.';
+      }
+      if (code === 'auth/unauthorized-domain') {
+        return currentLang === 'my' ? 'ဤ domain ကို Firebase Authentication တွင် ခွင့်ပြုမထားသေးပါ။' : 'This domain is not authorized in Firebase Authentication.';
+      }
+      return currentLang === 'my' ? 'အကောင့်ဝင်၍ မရပါ။ ထပ်မံကြိုးစားပါ။' : 'Unable to sign in. Please try again.';
+    }
+
+    function setAuthOverlayVisible(visible) {
+      const overlay = document.getElementById('authOverlay');
+      if (!overlay) return;
+      overlay.classList.toggle('hidden', !visible);
+      if (visible) setTimeout(() => document.getElementById('authEmail')?.focus(), 50);
+    }
+
+    window.toggleAuthPassword = function() {
+      const input = document.getElementById('authPassword');
+      const icon = document.getElementById('authPasswordIcon');
+      if (!input || !icon) return;
+      const showing = input.type === 'text';
+      input.type = showing ? 'password' : 'text';
+      icon.className = showing ? 'fa-regular fa-eye text-xs' : 'fa-regular fa-eye-slash text-xs';
+    };
+
+    window.loginFirebase = async function(event) {
+      event.preventDefault();
+      const email = document.getElementById('authEmail').value.trim();
+      const password = document.getElementById('authPassword').value;
+      const btn = document.getElementById('authLoginBtn');
+      if (!email || !password) return;
+
+      setAuthError('');
+      btn.disabled = true;
+      btn.classList.add('opacity-60', 'cursor-not-allowed');
+      btn.innerText = currentLang === 'my' ? 'အကောင့်ဝင်နေသည်...' : 'Signing in...';
+
+      try {
+        await setPersistence(auth, browserLocalPersistence);
+        await signInWithEmailAndPassword(auth, email, password);
+        document.getElementById('authPassword').value = '';
+      } catch (error) {
+        console.error('Firebase Auth sign-in error:', error);
+        setAuthError(authErrorMessage(error));
+      } finally {
+        btn.disabled = false;
+        btn.classList.remove('opacity-60', 'cursor-not-allowed');
+        btn.innerText = translations[currentLang].auth_login;
+      }
+    };
+
+    window.logoutFirebase = async function() {
+      if (!currentUser) {
+        setAuthOverlayVisible(true);
+        return;
+      }
+      const ok = confirm(currentLang === 'my' ? 'Firebase အကောင့်မှ ထွက်မည်လား?' : 'Sign out of Firebase?');
+      if (!ok) return;
+      try {
+        await signOut(auth);
+        showToast(currentLang === 'my' ? 'Cloud အကောင့်မှ ထွက်ပြီးပါပြီ' : 'Signed out');
+      } catch (error) {
+        console.error('Firebase Auth sign-out error:', error);
+        showToast(currentLang === 'my' ? 'အကောင့်ထွက်၍ မရပါ' : 'Could not sign out', true);
+      }
+    };
 
     // PIN State
     let enteredPin = "";
@@ -947,30 +1096,85 @@
 
     document.getElementById("txDate").value = getLocalDateStr();
 
-    // Real-time Firestore Sync. Sort locally so older documents without createdAt are not hidden.
-    setSyncStatus('connecting');
-    onSnapshot(txCollection, (snapshot) => {
+    // Firestore Sync starts only after Firebase Authentication succeeds.
+    function stopTransactionSync() {
+      if (typeof unsubscribeTransactions === 'function') {
+        unsubscribeTransactions();
+        unsubscribeTransactions = null;
+      }
+    }
+
+    function resetWalletViews() {
       transactions = [];
-      snapshot.forEach(docSnap => transactions.push({ id: docSnap.id, ...docSnap.data() }));
-      transactions.sort((a, b) => {
-        const dateCmp = String(b.dateStr || '').localeCompare(String(a.dateStr || ''));
-        if (dateCmp !== 0) return dateCmp;
-        const aSec = a.createdAt?.seconds || 0;
-        const bSec = b.createdAt?.seconds || 0;
-        return bSec - aSec;
-      });
-      setSyncStatus(navigator.onLine ? 'active' : 'offline');
       render();
       renderAnalytics();
       renderBudgets();
-    }, (err) => {
-      console.error("Firestore error:", err);
-      setSyncStatus(navigator.onLine ? 'error' : 'offline');
-      showToast(currentLang === 'my' ? "Cloud sync ချိတ်ဆက်မှု မအောင်မြင်ပါ" : "Cloud sync failed", true);
+    }
+
+    function startTransactionSync() {
+      stopTransactionSync();
+      if (!currentUser) {
+        setSyncStatus('auth');
+        return;
+      }
+
+      setSyncStatus(navigator.onLine ? 'connecting' : 'offline');
+      unsubscribeTransactions = onSnapshot(txCollection, (snapshot) => {
+        transactions = [];
+        snapshot.forEach(docSnap => transactions.push({ id: docSnap.id, ...docSnap.data() }));
+        transactions.sort((a, b) => {
+          const dateCmp = String(b.dateStr || '').localeCompare(String(a.dateStr || ''));
+          if (dateCmp !== 0) return dateCmp;
+          const aSec = a.createdAt?.seconds || 0;
+          const bSec = b.createdAt?.seconds || 0;
+          return bSec - aSec;
+        });
+        setSyncStatus(navigator.onLine ? 'active' : 'offline');
+        render();
+        renderAnalytics();
+        renderBudgets();
+      }, (err) => {
+        console.error('Firestore error:', err);
+        setSyncStatus(navigator.onLine ? 'error' : 'offline');
+        const denied = err?.code === 'permission-denied';
+        showToast(
+          denied
+            ? (currentLang === 'my' ? 'Firestore Rules က ဤအကောင့်ကို ခွင့်မပြုပါ' : 'Firestore Rules denied this account')
+            : (currentLang === 'my' ? 'Cloud sync ချိတ်ဆက်မှု မအောင်မြင်ပါ' : 'Cloud sync failed'),
+          true
+        );
+      });
+    }
+
+    setSyncStatus('auth');
+    onAuthStateChanged(auth, (user) => {
+      currentUser = user || null;
+      setAuthError('');
+
+      if (currentUser) {
+        setAuthOverlayVisible(false);
+        startTransactionSync();
+      } else {
+        stopTransactionSync();
+        resetWalletViews();
+        setSyncStatus('auth');
+        enteredPin = '';
+        updatePinUI();
+        document.getElementById('pinOverlay').classList.remove('hidden');
+        setAuthOverlayVisible(true);
+      }
+    }, (error) => {
+      console.error('Firebase Auth state error:', error);
+      currentUser = null;
+      stopTransactionSync();
+      resetWalletViews();
+      setSyncStatus('error');
+      setAuthOverlayVisible(true);
+      setAuthError(currentLang === 'my' ? 'Authentication state ကို စစ်ဆေး၍ မရပါ။' : 'Could not verify authentication state.');
     });
 
     window.addEventListener('offline', () => setSyncStatus('offline'));
-    window.addEventListener('online', () => setSyncStatus('connecting'));
+    window.addEventListener('online', () => setSyncStatus(currentUser ? 'connecting' : 'auth'));
 
     window.switchTab = function(tab) {
       triggerHaptic(12);
@@ -1086,6 +1290,11 @@
     window.saveTransaction = async function(e) {
       e.preventDefault();
       triggerHaptic(20);
+      if (!currentUser) {
+        setAuthOverlayVisible(true);
+        showToast(currentLang === 'my' ? 'အရင် Firebase အကောင့်ဝင်ပါ' : 'Sign in to Firebase first', true);
+        return;
+      }
       const saveBtn = document.getElementById("saveBtn");
       saveBtn.disabled = true;
       saveBtn.innerText = currentLang === 'my' ? "သိမ်းဆည်းနေပါသည်..." : "Saving...";
@@ -1157,6 +1366,11 @@
 
     window.deleteTx = async function(id) {
       triggerHaptic(20);
+      if (!currentUser) {
+        setAuthOverlayVisible(true);
+        showToast(currentLang === 'my' ? 'အရင် Firebase အကောင့်ဝင်ပါ' : 'Sign in to Firebase first', true);
+        return;
+      }
       if (confirm(currentLang === 'my' ? "ဤမှတ်တမ်းကို ဖျက်ရန် သေချာပါသလား?" : "Delete this transaction?")) {
         try {
           await deleteDoc(doc(db, "transactions", id));
@@ -1378,6 +1592,11 @@
 
     window.payRecurringBill = async function(id) {
       triggerHaptic(15);
+      if (!currentUser) {
+        setAuthOverlayVisible(true);
+        showToast(currentLang === 'my' ? 'အရင် Firebase အကောင့်ဝင်ပါ' : 'Sign in to Firebase first', true);
+        return;
+      }
       const bills = getRecurringBills();
       const bill = bills.find(b => b.id === id);
       if (!bill) return;
