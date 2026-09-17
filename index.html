@@ -54,16 +54,16 @@
 
     .glass-surface {
       background: linear-gradient(180deg, rgba(11, 22, 44, .96), rgba(8, 16, 32, .98));
-      backdrop-filter: blur(6px) saturate(110%);
-      -webkit-backdrop-filter: blur(6px) saturate(110%);
+      backdrop-filter: blur(10px) saturate(120%);
+      -webkit-backdrop-filter: blur(10px) saturate(120%);
       border: 1px solid rgba(122, 146, 187, .14);
       box-shadow: 0 12px 32px -24px rgba(0, 0, 0, .75), inset 0 1px 0 rgba(255,255,255,.03);
     }
 
     .glass-card-glow {
       background: linear-gradient(180deg, rgba(17, 31, 58, .98), rgba(10, 18, 36, .98));
-      backdrop-filter: blur(5px) saturate(110%);
-      -webkit-backdrop-filter: blur(5px) saturate(110%);
+      backdrop-filter: blur(8px) saturate(115%);
+      -webkit-backdrop-filter: blur(8px) saturate(115%);
       border: 1px solid rgba(148,163,184,.18);
       box-shadow: 0 14px 34px -24px rgba(0,0,0,.72), inset 0 1px 0 rgba(255,255,255,.06);
     }
@@ -486,23 +486,6 @@
         </div>
       </div>
 
-      <!-- Daily Snapshot -->
-      <section class="glass-surface rounded-3xl p-4">
-        <div class="flex items-center justify-between mb-3">
-          <div>
-            <div class="text-[13px] font-extrabold text-white">ဒီနေ့ အနှစ်ချုပ်</div>
-            <div id="todaySummaryDate" class="text-[10px] text-slate-500"></div>
-          </div>
-          <span id="todayTxCount" class="text-[10px] font-bold px-2 py-1 rounded-lg bg-blue-500/10 text-blue-300">0 စာရင်း</span>
-        </div>
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-          <div class="glass-pill rounded-2xl p-3"><div class="text-[9px] text-slate-500">MMK ဝင်ငွေ</div><div id="todayIncMMK" class="text-sm font-black text-emerald-400 mt-1">+0</div></div>
-          <div class="glass-pill rounded-2xl p-3"><div class="text-[9px] text-slate-500">MMK အသုံး</div><div id="todayExpMMK" class="text-sm font-black text-rose-400 mt-1">-0</div></div>
-          <div class="glass-pill rounded-2xl p-3"><div class="text-[9px] text-slate-500">THB ဝင်ငွေ</div><div id="todayIncTHB" class="text-sm font-black text-emerald-400 mt-1">+0</div></div>
-          <div class="glass-pill rounded-2xl p-3"><div class="text-[9px] text-slate-500">THB အသုံး</div><div id="todayExpTHB" class="text-sm font-black text-rose-400 mt-1">-0</div></div>
-        </div>
-      </section>
-
       <!-- Individual Accounts Carousel -->
       <div>
         <div class="flex items-center justify-between mb-2.5 px-1">
@@ -641,19 +624,6 @@
 
     <!-- TAB 3: TOOLS VIEW -->
     <div id="viewTools" class="hidden space-y-6">
-      <!-- Backup & Restore -->
-      <div class="glass-surface rounded-3xl p-5 space-y-3">
-        <div class="flex items-center justify-between">
-          <div><h3 class="font-bold text-sm text-white">Backup & Restore</h3><p class="text-[11px] text-slate-400">Transactions + Budget + Recurring data</p></div>
-          <i class="fa-solid fa-shield-halved text-blue-300"></i>
-        </div>
-        <div class="grid grid-cols-2 gap-2">
-          <button onclick="exportBackupJSON()" class="py-2.5 rounded-xl bg-blue-600/20 border border-blue-500/30 text-blue-300 text-xs font-bold"><i class="fa-solid fa-download mr-1"></i> Backup</button>
-          <label class="py-2.5 rounded-xl bg-indigo-600/20 border border-indigo-500/30 text-indigo-300 text-xs font-bold text-center cursor-pointer"><i class="fa-solid fa-upload mr-1"></i> Restore<input type="file" accept="application/json,.json" class="hidden" onchange="importBackupJSON(this)"></label>
-        </div>
-        <button onclick="migrateLegacyCloudData()" class="w-full py-2 rounded-xl border border-white/10 text-[10px] text-slate-400 hover:text-white"><i class="fa-solid fa-cloud-arrow-up mr-1"></i> Old Cloud Data Migration (one-time)</button>
-      </div>
-
       <!-- Quick Currency Converter -->
       <div class="glass-surface rounded-3xl p-5 space-y-3.5">
         <div class="flex items-center justify-between border-b border-white/10 pb-2.5">
@@ -957,7 +927,7 @@
   <!-- Firebase Scripts & Logic -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, serverTimestamp, updateDoc, writeBatch, getDocs }
+    import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, serverTimestamp }
       from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, setPersistence, browserLocalPersistence, signOut }
       from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -976,7 +946,7 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const auth = getAuth(app);
-    let txCollection = null;
+    const txCollection = collection(db, "transactions");
 
     // Comprehensive Separated Category Lists
     const expenseCategories = [
@@ -1075,7 +1045,6 @@
     let toastTimer = null;
     let currentUser = null;
     let unsubscribeTransactions = null;
-    let editingTxId = null;
 
     function escapeHtml(value) {
       return String(value ?? '').replace(/[&<>"']/g, ch => ({
@@ -1123,22 +1092,8 @@
       }
     }
 
-    function userStorageKey(base) {
-      return currentUser?.uid ? `${base}_${currentUser.uid}` : base;
-    }
-
-    function migrateLegacyLocalSettings() {
-      if (!currentUser) return;
-      for (const base of ['wallet_dual_budgets', 'wallet_recurring']) {
-        const scoped = userStorageKey(base);
-        if (localStorage.getItem(scoped) == null && localStorage.getItem(base) != null) {
-          localStorage.setItem(scoped, localStorage.getItem(base));
-        }
-      }
-    }
-
     function getRecurringBills() {
-      const bills = safeJsonParse(localStorage.getItem(userStorageKey('wallet_recurring')) || '[]', []);
+      const bills = safeJsonParse(localStorage.getItem('wallet_recurring') || '[]', []);
       return Array.isArray(bills) ? bills : [];
     }
 
@@ -1353,7 +1308,6 @@
         return;
       }
 
-      txCollection = collection(db, 'users', currentUser.uid, 'transactions');
       setSyncStatus(navigator.onLine ? 'connecting' : 'offline');
       unsubscribeTransactions = onSnapshot(txCollection, (snapshot) => {
         transactions = [];
@@ -1388,12 +1342,10 @@
       setAuthError('');
 
       if (currentUser) {
-        migrateLegacyLocalSettings();
         setAuthOverlayVisible(false);
         startTransactionSync();
       } else {
         stopTransactionSync();
-        txCollection = null;
         resetWalletViews();
         setSyncStatus('auth');
         setAuthOverlayVisible(true);
@@ -1496,16 +1448,11 @@
 
     window.openModal = function() {
       triggerHaptic(15);
-      editingTxId = null;
-      document.getElementById("txForm").reset();
-      document.getElementById("txDate").value = getLocalDateStr();
-      document.querySelector('[data-i18n="modal_tx_title"]').innerText = translations[currentLang].modal_tx_title;
       document.getElementById("txModal").classList.remove("hidden");
       setType('expense');
     };
 
     window.closeModal = function() {
-      editingTxId = null;
       document.getElementById("txModal").classList.add("hidden");
       document.getElementById("txForm").reset();
       document.getElementById("txDate").value = getLocalDateStr();
@@ -1573,10 +1520,9 @@
         type: currentType,
         amount: amount,
         currency: currency,
+        createdAt: serverTimestamp(),
         dateStr: customDate,
-        note: note,
-        ownerUid: currentUser.uid,
-        updatedAt: serverTimestamp()
+        note: note
       };
 
       if (currentType === 'transfer') {
@@ -1594,55 +1540,15 @@
       }
 
       try {
-        if (!txCollection) throw new Error('Transaction collection is not ready');
-        if (editingTxId) {
-          await updateDoc(doc(db, 'users', currentUser.uid, 'transactions', editingTxId), docData);
-          showToast(currentLang === 'my' ? "မှတ်တမ်းကို ပြင်ဆင်ပြီးပါပြီ" : "Transaction updated");
-        } else {
-          docData.createdAt = serverTimestamp();
-          await addDoc(txCollection, docData);
-          showToast(currentLang === 'my' ? "မှတ်တမ်း အသစ် သိမ်းဆည်းပြီးပါပြီ" : "Saved successfully");
-        }
+        await addDoc(txCollection, docData);
         closeModal();
+        showToast(currentLang === 'my' ? "မှတ်တမ်း အသစ် သိမ်းဆည်းပြီးပါပြီ" : "Saved successfully");
       } catch (err) {
         showToast("Error: " + err.message, true);
       } finally {
         saveBtn.disabled = false;
         saveBtn.innerText = translations[currentLang].btn_save;
       }
-    };
-
-    window.editTx = function(id) {
-      const item = transactions.find(t => t.id === id);
-      if (!item) return;
-      editingTxId = id;
-      currentType = item.type || 'expense';
-      document.getElementById("txModal").classList.remove("hidden");
-      setType(currentType);
-      document.getElementById("txAmount").value = Number(item.amount) || '';
-      document.getElementById("txCurrency").value = item.currency || 'MMK';
-      document.getElementById("txDate").value = item.dateStr || getLocalDateStr();
-      document.getElementById("txNote").value = item.note || '';
-      if (currentType === 'transfer') {
-        document.getElementById("txFromAccount").value = item.fromAccount || 'Cash';
-        document.getElementById("txToAccount").value = item.toAccount || 'KBZPay';
-      } else {
-        document.getElementById("txAccount").value = item.account || 'Cash';
-        const select = document.getElementById("txCategory");
-        const exists = [...select.options].some(o => o.value === item.category);
-        if (exists) {
-          select.value = item.category;
-          document.getElementById("customCategoryBox").classList.add("hidden");
-        } else {
-          const customOpt = [...select.options].find(o => o.value.includes('စိတ်ကြိုက် ရိုက်ထည့်မည်'));
-          if (customOpt) select.value = customOpt.value;
-          document.getElementById("txCustomCategoryInput").value = String(item.category || '').replace(/^🏷️\s*/, '');
-          document.getElementById("customCategoryBox").classList.remove("hidden");
-        }
-      }
-      const title = document.querySelector('[data-i18n="modal_tx_title"]');
-      if (title) title.innerText = currentLang === 'my' ? 'မှတ်တမ်း ပြင်ဆင်ရန်' : 'Edit Transaction';
-      document.getElementById("saveBtn").innerText = currentLang === 'my' ? 'ပြင်ဆင်မှု သိမ်းမည်' : 'Save Changes';
     };
 
     window.deleteTx = async function(id) {
@@ -1654,7 +1560,7 @@
       }
       if (confirm(currentLang === 'my' ? "ဤမှတ်တမ်းကို ဖျက်ရန် သေချာပါသလား?" : "Delete this transaction?")) {
         try {
-          await deleteDoc(doc(db, 'users', currentUser.uid, 'transactions', id));
+          await deleteDoc(doc(db, "transactions", id));
           showToast(currentLang === 'my' ? "မှတ်တမ်းကို ဖျက်ပြီးပါပြီ" : "Deleted");
         } catch (err) {
           showToast("Error", true);
@@ -1697,85 +1603,6 @@
       showToast(currentLang === 'my' ? "CSV ဖိုင် ထုတ်ယူပြီးပါပြီ" : "CSV downloaded");
     };
 
-    window.migrateLegacyCloudData = async function() {
-      if (!currentUser || !txCollection) return;
-      const ok = confirm(currentLang === 'my'
-        ? 'အရင် version ရဲ့ root transactions collection ထဲက စာရင်းတွေကို ဒီအကောင့်ထဲ copy လုပ်မည်။ တစ်ကြိမ်သာလုပ်ရန် အကြံပြုပါသည်။ ဆက်လုပ်မလား?'
-        : 'Copy legacy root transactions into this account? Run this only once.');
-      if (!ok) return;
-      try {
-        const legacy = await getDocs(collection(db, 'transactions'));
-        if (legacy.empty) {
-          showToast(currentLang === 'my' ? 'အဟောင်း Cloud စာရင်း မတွေ့ပါ' : 'No legacy cloud records found', true);
-          return;
-        }
-        const docs = legacy.docs.map(d => d.data());
-        for (let i = 0; i < docs.length; i += 400) {
-          const batch = writeBatch(db);
-          docs.slice(i, i + 400).forEach(t => {
-            const ref = doc(collection(db, 'users', currentUser.uid, 'transactions'));
-            const clean = {...t, ownerUid: currentUser.uid, migratedFromLegacy: true, updatedAt: serverTimestamp()};
-            if (!clean.createdAt) clean.createdAt = serverTimestamp();
-            batch.set(ref, clean);
-          });
-          await batch.commit();
-        }
-        showToast(currentLang === 'my' ? `${docs.length} စာရင်း migrate လုပ်ပြီးပါပြီ` : `Migrated ${docs.length} records`);
-      } catch (e) {
-        console.error('Legacy migration failed', e);
-        showToast(currentLang === 'my' ? 'Legacy data migrate မအောင်မြင်ပါ' : 'Legacy migration failed', true);
-      }
-    };
-
-    window.exportBackupJSON = function() {
-      if (!currentUser) return;
-      const payload = {
-        version: 2, exportedAt: new Date().toISOString(), uid: currentUser.uid,
-        transactions: transactions.map(({id, ...t}) => ({...t, id})),
-        budgets: getSavedBudgets(), recurring: getRecurringBills()
-      };
-      const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url; a.download = `BK_Wallet_Backup_${getLocalDateStr()}.json`;
-      document.body.appendChild(a); a.click(); a.remove();
-      setTimeout(() => URL.revokeObjectURL(url), 0);
-      showToast(currentLang === 'my' ? 'Backup JSON ထုတ်ပြီးပါပြီ' : 'Backup exported');
-    };
-
-    window.importBackupJSON = function(input) {
-      const file = input.files?.[0];
-      if (!file || !currentUser) return;
-      const reader = new FileReader();
-      reader.onload = async () => {
-        try {
-          const data = JSON.parse(String(reader.result || '{}'));
-          if (!Array.isArray(data.transactions)) throw new Error('Invalid backup');
-          const ok = confirm(currentLang === 'my' ? `Backup ထဲမှ ${data.transactions.length} စာရင်းကို ထပ်ပေါင်းသွင်းမည်။ ဆက်လုပ်မလား?` : `Import ${data.transactions.length} transactions? Existing records will remain.`);
-          if (!ok) return;
-          const chunks = [];
-          for (let i=0;i<data.transactions.length;i+=400) chunks.push(data.transactions.slice(i,i+400));
-          for (const chunk of chunks) {
-            const batch = writeBatch(db);
-            chunk.forEach(t => {
-              const ref = doc(collection(db, 'users', currentUser.uid, 'transactions'));
-              const clean = {...t}; delete clean.id; delete clean.createdAt; delete clean.updatedAt;
-              clean.ownerUid = currentUser.uid; clean.createdAt = serverTimestamp(); clean.updatedAt = serverTimestamp();
-              batch.set(ref, clean);
-            });
-            await batch.commit();
-          }
-          if (data.budgets) localStorage.setItem(userStorageKey('wallet_dual_budgets'), JSON.stringify(data.budgets));
-          if (Array.isArray(data.recurring)) localStorage.setItem(userStorageKey('wallet_recurring'), JSON.stringify(data.recurring));
-          renderBudgets(); renderRecurring();
-          showToast(currentLang === 'my' ? 'Backup ပြန်သွင်းပြီးပါပြီ' : 'Backup imported');
-        } catch (e) {
-          console.error(e); showToast(currentLang === 'my' ? 'Backup ဖိုင် မမှန်ပါ' : 'Invalid backup file', true);
-        } finally { input.value=''; }
-      };
-      reader.readAsText(file);
-    };
-
     window.calculateConvert = function(source) {
       const parsedRate = parseFloat(document.getElementById("convRate").value);
       const rate = Number.isFinite(parsedRate) && parsedRate > 0 ? parsedRate : 1;
@@ -1798,7 +1625,7 @@
     };
 
     function getSavedBudgets() {
-      const saved = safeJsonParse(localStorage.getItem(userStorageKey('wallet_dual_budgets')) || 'null', null);
+      const saved = safeJsonParse(localStorage.getItem('wallet_dual_budgets') || 'null', null);
       const clone = JSON.parse(JSON.stringify(defaultDualBudgets));
       if (!saved || typeof saved !== 'object') return clone;
       for (const curr of ['MMK', 'THB']) {
@@ -1866,7 +1693,7 @@
         travel: Math.max(0, parseFloat(document.getElementById("b_travel").value) || 0),
         bills: Math.max(0, parseFloat(document.getElementById("b_bills").value) || 0)
       };
-      localStorage.setItem(userStorageKey('wallet_dual_budgets'), JSON.stringify(allBudgets));
+      localStorage.setItem('wallet_dual_budgets', JSON.stringify(allBudgets));
       closeBudgetModal();
       renderBudgets();
       showToast(currentLang === 'my' ? "Budget သတ်မှတ်ချက် သိမ်းဆည်းပြီးပါပြီ" : "Budgets Saved");
@@ -1942,7 +1769,7 @@
         return;
       }
       bills.push(newBill);
-      localStorage.setItem(userStorageKey('wallet_recurring'), JSON.stringify(bills));
+      localStorage.setItem('wallet_recurring', JSON.stringify(bills));
       closeRecurringModal();
       document.getElementById("recTitle").value = "";
       document.getElementById("recAmount").value = "";
@@ -1968,7 +1795,6 @@
       }
 
       try {
-        if (!txCollection) throw new Error('Transaction collection is not ready');
         await addDoc(txCollection, {
           type: 'expense',
           amount: bill.amount,
@@ -1977,12 +1803,10 @@
           category: bill.category || '📦 အထွေထွေ အသုံးစရိတ် (General)',
           note: `[Recurring] ${bill.title}`,
           dateStr: today,
-          createdAt: serverTimestamp(),
-          updatedAt: serverTimestamp(),
-          ownerUid: currentUser.uid
+          createdAt: serverTimestamp()
         });
         bill.lastPaidDate = today;
-        localStorage.setItem(userStorageKey('wallet_recurring'), JSON.stringify(bills));
+        localStorage.setItem('wallet_recurring', JSON.stringify(bills));
         renderRecurring();
         showToast(currentLang === 'my' ? "စာရင်းသွင်းပြီးပါပြီ" : "Paid & Recorded");
       } catch(e) { showToast("Error", true); }
@@ -1991,7 +1815,7 @@
     window.deleteRecurringBill = function(id) {
       let bills = getRecurringBills();
       bills = bills.filter(b => b.id !== id);
-      localStorage.setItem(userStorageKey('wallet_recurring'), JSON.stringify(bills));
+      localStorage.setItem('wallet_recurring', JSON.stringify(bills));
       renderRecurring();
     };
 
@@ -2157,26 +1981,6 @@
         }
       });
 
-      const todayStr = getLocalDateStr();
-      let tIncM = 0, tExpM = 0, tIncT = 0, tExpT = 0, tCount = 0;
-      transactions.forEach(t => {
-        if (t.dateStr !== todayStr || t.type === 'transfer') return;
-        const amt = Number(t.amount) || 0;
-        tCount++;
-        if (t.currency === 'THB') {
-          if (t.type === 'income') tIncT += amt; else if (t.type === 'expense') tExpT += amt;
-        } else {
-          if (t.type === 'income') tIncM += amt; else if (t.type === 'expense') tExpM += amt;
-        }
-      });
-      const privacyNumber = v => isPrivate ? '•••' : v.toLocaleString();
-      document.getElementById('todaySummaryDate').textContent = todayStr;
-      document.getElementById('todayTxCount').textContent = currentLang === 'my' ? `${tCount} စာရင်း` : `${tCount} records`;
-      document.getElementById('todayIncMMK').textContent = `+${privacyNumber(tIncM)}`;
-      document.getElementById('todayExpMMK').textContent = `-${privacyNumber(tExpM)}`;
-      document.getElementById('todayIncTHB').textContent = `+${privacyNumber(tIncT)}`;
-      document.getElementById('todayExpTHB').textContent = `-${privacyNumber(tExpT)}`;
-
       const privIcon = document.getElementById("privacyIcon");
       if (privIcon) privIcon.className = isPrivate ? "fa-regular fa-eye-slash text-[11px] text-indigo-400" : "fa-regular fa-eye text-[11px]";
 
@@ -2265,10 +2069,7 @@
               <span class="font-black text-xs sm:text-sm ${colorClass} tracking-tight">
                 ${sign}${isPrivate ? '••••' : (Number(item.amount) || 0).toLocaleString()} <span class="text-[10px] font-normal text-slate-400">${escapeHtml(item.currency)}</span>
               </span>
-              <button onclick="editTx('${item.id}')" title="Edit" class="w-7 h-7 rounded-full glass-pill flex items-center justify-center text-slate-500 hover:text-blue-300 active:scale-90 transition">
-                <i class="fa-solid fa-pen text-[10px]"></i>
-              </button>
-              <button onclick="deleteTx('${item.id}')" title="Delete" class="w-7 h-7 rounded-full glass-pill flex items-center justify-center text-slate-500 hover:text-rose-400 active:scale-90 transition">
+              <button onclick="deleteTx('${item.id}')" class="w-7 h-7 rounded-full glass-pill flex items-center justify-center text-slate-500 hover:text-rose-400 active:scale-90 transition">
                 <i class="fa-solid fa-trash-can text-[10px]"></i>
               </button>
             </div>
