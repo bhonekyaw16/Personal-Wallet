@@ -34,11 +34,7 @@
       font-family: 'Plus Jakarta Sans', 'Noto Sans Myanmar', system-ui, -apple-system, sans-serif;
       -webkit-tap-highlight-color: transparent;
       line-height: 1.6;
-      background:
-        radial-gradient(circle at 16% 3%, rgba(37, 99, 235, .20), transparent 30%),
-        radial-gradient(circle at 92% 42%, rgba(6, 182, 212, .11), transparent 32%),
-        radial-gradient(circle at 30% 98%, rgba(16, 185, 129, .08), transparent 30%),
-        linear-gradient(180deg, #020611 0%, #030814 45%, #021015 100%);
+      background: linear-gradient(180deg, #040915 0%, #020611 60%, #02040a 100%);
       background-attachment: fixed;
     }
 
@@ -47,45 +43,43 @@
       position: fixed;
       inset: 0;
       pointer-events: none;
-      opacity: .2;
-      background-image:
-        linear-gradient(rgba(255,255,255,.015) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,.015) 1px, transparent 1px);
-      background-size: 44px 44px;
-      mask-image: linear-gradient(to bottom, black, transparent 82%);
+      background:
+        radial-gradient(circle at top center, rgba(37,99,235,.18), transparent 32%),
+        radial-gradient(circle at 75% 18%, rgba(34,211,238,.08), transparent 22%);
+      opacity: .9;
     }
 
     button, input, select { font: inherit; }
     button { touch-action: manipulation; }
 
     .glass-surface {
-      background: linear-gradient(145deg, rgba(16, 27, 49, .88), rgba(7, 14, 29, .82));
-      backdrop-filter: blur(28px) saturate(150%);
-      -webkit-backdrop-filter: blur(28px) saturate(150%);
-      border: 1px solid var(--line);
-      box-shadow: 0 24px 60px -34px rgba(0, 0, 0, .9), inset 0 1px 0 rgba(255,255,255,.04);
+      background: linear-gradient(180deg, rgba(11, 22, 44, .96), rgba(8, 16, 32, .98));
+      backdrop-filter: blur(10px) saturate(120%);
+      -webkit-backdrop-filter: blur(10px) saturate(120%);
+      border: 1px solid rgba(122, 146, 187, .14);
+      box-shadow: 0 12px 32px -24px rgba(0, 0, 0, .75), inset 0 1px 0 rgba(255,255,255,.03);
     }
 
     .glass-card-glow {
-      background: linear-gradient(145deg, rgba(19, 32, 57, .96), rgba(9, 17, 34, .88));
-      backdrop-filter: blur(30px) saturate(160%);
-      -webkit-backdrop-filter: blur(30px) saturate(160%);
-      border: 1px solid rgba(148,163,184,.20);
-      box-shadow: 0 25px 60px -35px rgba(0,0,0,.95), inset 0 1px 0 rgba(255,255,255,.08);
+      background: linear-gradient(180deg, rgba(17, 31, 58, .98), rgba(10, 18, 36, .98));
+      backdrop-filter: blur(8px) saturate(115%);
+      -webkit-backdrop-filter: blur(8px) saturate(115%);
+      border: 1px solid rgba(148,163,184,.18);
+      box-shadow: 0 14px 34px -24px rgba(0,0,0,.72), inset 0 1px 0 rgba(255,255,255,.06);
     }
 
     .glass-pill {
-      background: rgba(15, 28, 51, .76);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
+      background: rgba(19, 31, 57, .92);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       border: 1px solid rgba(148, 163, 184, .14);
     }
 
     .glass-input {
-      background: rgba(4, 11, 24, .78);
-      backdrop-filter: blur(16px);
-      border: 1px solid rgba(148, 163, 184, .18);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.025), 0 12px 30px -24px rgba(0,0,0,.9);
+      background: rgba(6, 14, 28, .96);
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(148, 163, 184, .16);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.02);
       transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
     }
     .glass-input:focus {
@@ -95,11 +89,11 @@
     }
 
     .glass-dock {
-      background: linear-gradient(180deg, rgba(12, 22, 42, .96), rgba(5, 12, 27, .97));
-      backdrop-filter: blur(32px) saturate(180%);
-      -webkit-backdrop-filter: blur(32px) saturate(180%);
-      border: 1px solid rgba(148,163,184,.20);
-      box-shadow: 0 24px 70px rgba(0,0,0,.62), inset 0 1px 0 rgba(255,255,255,.08);
+      background: linear-gradient(180deg, rgba(10, 19, 38, .98), rgba(7, 14, 28, .99));
+      backdrop-filter: blur(12px) saturate(120%);
+      -webkit-backdrop-filter: blur(12px) saturate(120%);
+      border: 1px solid rgba(148,163,184,.18);
+      box-shadow: 0 14px 38px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.05);
     }
 
     .brand-mark {
@@ -122,28 +116,37 @@
     .brand-mark i { position: relative; z-index: 1; }
 
     .premium-header {
-      background: rgba(3, 8, 20, .72);
-      backdrop-filter: blur(28px) saturate(160%);
-      -webkit-backdrop-filter: blur(28px) saturate(160%);
-      border-bottom: 1px solid rgba(148, 163, 184, .10);
+      background: rgba(4, 8, 18, .86);
+      backdrop-filter: blur(10px) saturate(115%);
+      -webkit-backdrop-filter: blur(10px) saturate(115%);
+      border-bottom: 1px solid rgba(148, 163, 184, .08);
     }
 
     .welcome-strip {
       position: relative;
       overflow: hidden;
-      border: 1px solid rgba(96,165,250,.20);
+      border: 1px solid rgba(96,165,250,.16);
       background:
-        radial-gradient(circle at 78% 15%, rgba(34,211,238,.16), transparent 28%),
-        linear-gradient(135deg, rgba(22, 42, 79, .80), rgba(8, 17, 34, .84));
-      box-shadow: 0 24px 55px -38px rgba(59,130,246,.9);
+        linear-gradient(180deg, rgba(20,39,77,.92), rgba(7,15,31,.98)),
+        linear-gradient(180deg, rgba(255,255,255,0), rgba(255,255,255,0));
+      box-shadow: 0 14px 30px -24px rgba(37,99,235,.48);
+    }
+    .welcome-strip::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 320'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' x2='0' y1='0' y2='1'%3E%3Cstop stop-color='%236aa7ff' stop-opacity='.34'/%3E%3Cstop offset='1' stop-color='%23081622' stop-opacity='0'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='800' height='320' fill='url(%23g)'/%3E%3Cpath d='M0 225L135 145l55 46 82-83 102 108 74-56 60 58 64-44 70 51v115H0z' fill='%2313284f' fill-opacity='.88'/%3E%3Cpath d='M0 253L146 168l51 44 79-77 101 98 73-46 62 55 67-40 77 51v67H0z' fill='%23203b73' fill-opacity='.72'/%3E%3Cpath d='M0 286l116-49 65 13 109-77 53 27 115-83 94 84 148 85H0z' fill='%23385da1' fill-opacity='.46'/%3E%3C/svg%3E");
+      background-size: cover;
+      background-position: center;
+      opacity: .9;
+      pointer-events: none;
     }
     .welcome-strip::after {
       content: '';
       position: absolute;
-      width: 180px; height: 180px;
-      right: -70px; bottom: -115px;
-      border-radius: 50%;
-      border: 35px solid rgba(255,255,255,.035);
+      inset: 0;
+      background: linear-gradient(180deg, rgba(8,13,25,.05), rgba(3,7,15,.18));
+      pointer-events: none;
     }
 
     .balance-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -197,12 +200,12 @@
 
     .wallet-card {
       position: relative;
-      min-width: 148px;
-      border-radius: 22px;
-      padding: 14px;
-      background: linear-gradient(145deg, rgba(18, 32, 56, .88), rgba(8, 17, 33, .92));
-      border: 1px solid rgba(148,163,184,.15);
-      box-shadow: 0 18px 42px -32px rgba(0,0,0,.9), inset 0 1px 0 rgba(255,255,255,.04);
+      min-width: 120px;
+      border-radius: 20px;
+      padding: 14px 12px;
+      background: linear-gradient(180deg, rgba(19, 34, 62, .96), rgba(10, 18, 36, .98));
+      border: 1px solid rgba(148,163,184,.14);
+      box-shadow: 0 12px 24px -18px rgba(0,0,0,.72), inset 0 1px 0 rgba(255,255,255,.04);
       transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
     }
     .wallet-card:hover { transform: translateY(-2px); border-color: rgba(96,165,250,.34); }
@@ -211,7 +214,7 @@
       box-shadow: 0 20px 45px -30px rgba(14,165,233,.55), inset 0 1px 0 rgba(255,255,255,.06);
     }
     .account-logo {
-      width: 38px; height: 38px;
+      width: 46px; height: 46px;
       border-radius: 14px;
       display: grid;
       place-items: center;
@@ -232,10 +235,10 @@
     #searchInput::placeholder { color: #64748b; }
 
     #txList > div {
-      border-radius: 22px !important;
-      border-color: rgba(148,163,184,.13) !important;
-      background: linear-gradient(145deg, rgba(14, 27, 49, .82), rgba(7, 16, 31, .88)) !important;
-      box-shadow: 0 18px 42px -34px rgba(0,0,0,.9), inset 0 1px 0 rgba(255,255,255,.035) !important;
+      border-radius: 20px !important;
+      border-color: rgba(148,163,184,.12) !important;
+      background: linear-gradient(180deg, rgba(14, 26, 49, .96), rgba(8, 17, 32, .98)) !important;
+      box-shadow: 0 10px 24px -18px rgba(0,0,0,.72), inset 0 1px 0 rgba(255,255,255,.03) !important;
     }
 
     .premium-login {
@@ -322,12 +325,8 @@
     }
   </style>
 </head>
-<body class="bg-[#04060d] text-slate-100 min-h-screen selection:bg-indigo-500 selection:text-white pb-48 relative overflow-x-hidden">
+<body class="bg-[#04060d] text-slate-100 min-h-screen selection:bg-indigo-500 selection:text-white pb-44 relative overflow-x-hidden">
 
-  <!-- Ambient Glow Effects -->
-  <div class="fixed top-[-10%] left-[-10%] w-[450px] h-[450px] rounded-full bg-indigo-600/20 blur-[130px] pointer-events-none"></div>
-  <div class="fixed top-[35%] right-[-15%] w-[400px] h-[400px] rounded-full bg-cyan-500/15 blur-[140px] pointer-events-none"></div>
-  <div class="fixed bottom-[-5%] left-[20%] w-[450px] h-[450px] rounded-full bg-emerald-600/15 blur-[140px] pointer-events-none"></div>
 
   <!-- FIREBASE AUTH LOGIN OVERLAY -->
   <div id="authOverlay" class="premium-login fixed inset-0 z-[70] flex items-center justify-center px-5 py-8">
@@ -380,7 +379,7 @@
   </div>
 
   <!-- Premium App Header -->
-  <header class="premium-header sticky top-0 z-30 px-4 py-3">
+  <header class="premium-header sticky top-0 z-30 px-4 py-2.5">
     <div class="max-w-4xl mx-auto flex items-center justify-between gap-3">
       <div class="flex items-center gap-3 min-w-0">
         <div class="brand-mark w-10 h-10 rounded-2xl shrink-0"><i class="fa-solid fa-wallet text-white text-sm"></i></div>
@@ -417,15 +416,35 @@
     <div id="viewDashboard" class="space-y-6">
       
       <!-- Welcome / Identity Strip -->
-      <section class="welcome-strip p-4 sm:p-5 flex items-center justify-between gap-4">
-        <div class="min-w-0">
-          <div id="greetingText" class="text-lg sm:text-xl font-extrabold text-white tracking-tight">မင်္ဂလာပါ 👋</div>
-          <div class="text-[11px] sm:text-xs text-slate-400 mt-1" data-i18n="dashboard_sub">ဒီနေ့ ငွေကြေးအခြေအနေကို တစ်နေရာတည်းမှာ ကြည့်ပါ</div>
-        </div>
-        <div class="shrink-0 text-right">
-          <div id="welcomeDate" class="text-[11px] font-bold text-blue-300"></div>
-          <div class="mt-1 inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 border border-emerald-400/20 px-2.5 py-1 text-[9px] font-bold text-emerald-300">
-            <i class="fa-solid fa-cloud-arrow-up"></i> <span data-i18n="cloud_ready">Cloud Ready</span>
+      <section class="welcome-strip rounded-[30px] p-4 sm:p-5">
+        <div class="relative z-[1]">
+          <div class="flex items-start justify-between gap-3 mb-5">
+            <div class="flex items-center gap-3 min-w-0">
+              <div class="brand-mark w-14 h-14 rounded-[18px] shrink-0"><i class="fa-solid fa-wallet text-white text-lg"></i></div>
+              <div class="min-w-0">
+                <div class="text-[28px] sm:text-[30px] leading-none font-extrabold tracking-tight text-white">BK <span class="text-blue-400">Wallet</span></div>
+                <div class="text-[12px] text-slate-300 mt-1" data-i18n="dashboard_sub">လုံခြုံသော ငွေစီမံခန့်ခွဲမှု</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+              <button class="w-11 h-11 rounded-full glass-pill flex items-center justify-center text-slate-200 relative">
+                <i class="fa-regular fa-bell text-sm"></i>
+                <span class="absolute top-1.5 right-1.5 w-2.5 h-2.5 rounded-full bg-rose-500 border border-slate-950"></span>
+              </button>
+              <div class="w-11 h-11 rounded-full border-2 border-white/80 shadow-md overflow-hidden bg-gradient-to-br from-sky-300 via-blue-500 to-indigo-700 flex items-center justify-center text-white">
+                <i class="fa-solid fa-user text-sm"></i>
+              </div>
+            </div>
+          </div>
+          <div class="flex items-end justify-between gap-3">
+            <div>
+              <div id="greetingText" class="text-xl sm:text-2xl font-extrabold text-white tracking-tight">မင်္ဂလာပါ 👋</div>
+              <div class="text-sm text-slate-300 mt-0.5">BK Wallet User</div>
+            </div>
+            <div class="text-right shrink-0">
+              <div id="welcomeDate" class="text-[12px] font-semibold text-slate-200"></div>
+              <div class="text-sm text-slate-300 mt-0.5" data-i18n="cloud_ready">Have a great day!</div>
+            </div>
           </div>
         </div>
       </section>
@@ -470,17 +489,22 @@
       <!-- Individual Accounts Carousel -->
       <div>
         <div class="flex items-center justify-between mb-2.5 px-1">
-          <span class="text-xs font-extrabold text-slate-300 uppercase tracking-wider" data-i18n="wallets">ပိုက်ဆံအိတ်များ</span>
-          <span class="text-[10px] text-slate-500 font-medium" data-i18n="scroll_hint">ဘေးသို့ဆွဲပါ ➔</span>
+          <span class="text-[13px] font-extrabold text-white tracking-tight" data-i18n="wallets">လက်ရှိ Wallet များ:</span>
+          <button class="text-[12px] text-blue-400 font-bold">အလုံးစုံ ကြည့်မည် <i class="fa-solid fa-angle-right text-[10px]"></i></button>
         </div>
         <div class="flex gap-3 overflow-x-auto no-scrollbar pb-2" id="accountBreakdownList"></div>
       </div>
 
       <!-- Search & Filters -->
-      <div class="glass-surface rounded-2xl p-3.5 space-y-3">
-        <div class="relative">
-          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
-          <input type="text" id="searchInput" oninput="applyFilters()" placeholder="မှတ်ချက်၊ အမျိုးအစား ရှာဖွေရန်..." class="w-full glass-input rounded-xl pl-9 pr-3 py-2 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-400 transition" />
+      <div class="space-y-3">
+        <div class="flex items-center gap-3">
+          <div class="relative flex-1">
+            <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+            <input type="text" id="searchInput" oninput="applyFilters()" placeholder="ငွေလွှဲ/ဝင်ငွေ/အသုံးစရိတ် ရှာဖွေပါ..." class="w-full glass-input rounded-full pl-12 pr-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-400 transition" />
+          </div>
+          <button onclick="setFilter('all')" class="w-14 h-14 rounded-full glass-pill flex items-center justify-center text-slate-200 shrink-0">
+            <i class="fa-solid fa-sliders text-lg"></i>
+          </button>
         </div>
 
         <div class="grid grid-cols-4 gap-1.5 p-1 bg-black/40 rounded-xl border border-white/5 text-[11px] sm:text-xs">
@@ -493,9 +517,10 @@
 
       <!-- Recent Transactions Header -->
       <div class="flex items-center justify-between px-1 pt-1">
-        <h2 class="text-xs font-extrabold text-slate-300 uppercase tracking-wider" data-i18n="recent_tx">မကြာသေးမီ စာရင်းများ</h2>
-        <span class="text-xs text-indigo-400 font-semibold" id="txCount">0 စာရင်း</span>
+        <h2 class="text-[13px] font-extrabold text-white tracking-tight" data-i18n="recent_tx">နောက်ဆုံး ငွေလွှဲမှတ်တမ်းများ:</h2>
+        <button class="text-[12px] text-blue-400 font-bold">အလုံးစုံ ကြည့်မည် <i class="fa-solid fa-angle-right text-[10px]"></i></button>
       </div>
+      <div class="hidden"><span id="txCount">0 စာရင်း</span></div>
 
       <!-- Transaction List -->
       <div id="txList" class="space-y-2.5"></div>
@@ -671,24 +696,24 @@
 
   <!-- Modern Floating Bottom Dock -->
   <div class="dock-shell fixed bottom-4 left-0 right-0 z-40 px-4 pointer-events-none">
-    <div class="max-w-md mx-auto glass-dock rounded-full px-6 py-2.5 flex items-center justify-between shadow-2xl pointer-events-auto">
-      <button onclick="switchTab('dashboard')" id="dockBtnDashboard" class="flex flex-col items-center gap-1 text-indigo-400 active:scale-95 transition">
-        <i class="fa-solid fa-house text-sm sm:text-base"></i>
-        <span class="text-[10px] font-bold" data-i18n="dock_home">ပင်မ</span>
+    <div class="max-w-md mx-auto glass-dock rounded-[28px] px-7 py-3 flex items-center justify-between shadow-2xl pointer-events-auto">
+      <button onclick="switchTab('dashboard')" id="dockBtnDashboard" class="flex flex-col items-center gap-1 text-indigo-400 active:scale-95 transition min-w-[54px]">
+        <i class="fa-solid fa-house text-lg"></i>
+        <span class="text-[10px] font-bold" data-i18n="dock_home">Home</span>
       </button>
 
-      <button onclick="switchTab('analytics')" id="dockBtnAnalytics" class="flex flex-col items-center gap-1 text-slate-400 hover:text-indigo-400 active:scale-95 transition">
-        <i class="fa-solid fa-chart-simple text-sm sm:text-base"></i>
-        <span class="text-[10px] font-bold" data-i18n="dock_report">စာရင်းချုပ်</span>
+      <button onclick="switchTab('analytics')" id="dockBtnAnalytics" class="flex flex-col items-center gap-1 text-slate-400 hover:text-indigo-400 active:scale-95 transition min-w-[54px]">
+        <i class="fa-solid fa-chart-simple text-lg"></i>
+        <span class="text-[10px] font-bold" data-i18n="dock_report">Reports</span>
       </button>
 
-      <button onclick="openModal()" class="dock-add rounded-full hover:brightness-110 active:scale-90 transition flex items-center justify-center text-white -mt-6">
-        <i class="fa-solid fa-plus text-base"></i>
+      <button onclick="openModal()" class="dock-add rounded-full hover:brightness-110 active:scale-90 transition flex items-center justify-center text-white -mt-8">
+        <i class="fa-solid fa-plus text-lg"></i>
       </button>
 
-      <button onclick="switchTab('tools')" id="dockBtnTools" class="flex flex-col items-center gap-1 text-slate-400 hover:text-indigo-400 active:scale-95 transition">
-        <i class="fa-solid fa-sliders text-sm sm:text-base"></i>
-        <span class="text-[10px] font-bold" data-i18n="dock_tools">ကိရိယာများ</span>
+      <button onclick="switchTab('tools')" id="dockBtnTools" class="flex flex-col items-center gap-1 text-slate-400 hover:text-indigo-400 active:scale-95 transition min-w-[54px]">
+        <i class="fa-solid fa-sliders text-lg"></i>
+        <span class="text-[10px] font-bold" data-i18n="dock_tools">Tools</span>
       </button>
     </div>
   </div>
@@ -1977,13 +2002,10 @@
         const [icon, short] = accountVisual(acc);
         return `
           <div class="wallet-card shrink-0" data-account="${escapeHtml(acc)}">
-            <div class="flex items-center justify-between gap-3">
-              <div class="account-logo"><i class="fa-solid ${icon}"></i></div>
-              <span class="text-[9px] font-extrabold tracking-wide text-slate-500">${escapeHtml(short)}</span>
-            </div>
-            <div class="mt-3 text-[11px] text-slate-300 font-extrabold tracking-tight">${escapeHtml(acc)}</div>
-            <div class="text-sm font-black text-white mt-1">${isPrivate ? "••••" : bal.MMK.toLocaleString()} <span class="text-[9px] text-slate-500 font-semibold">MMK</span></div>
-            <div class="text-[11px] font-extrabold text-amber-300 mt-0.5">${isPrivate ? "••••" : bal.THB.toLocaleString()} <span class="text-[9px] text-slate-500 font-semibold">THB</span></div>
+            <div class="account-logo mb-3"><i class="fa-solid ${icon}"></i></div>
+            <div class="text-[11px] text-white font-extrabold tracking-tight leading-4 min-h-[32px]">${escapeHtml(acc)}</div>
+            <div class="text-[13px] font-black text-slate-200 mt-3">MMK ${isPrivate ? "••••" : bal.MMK.toLocaleString()}</div>
+            <div class="text-[11px] font-semibold text-amber-300 mt-0.5">THB ${isPrivate ? "••••" : bal.THB.toLocaleString()}</div>
           </div>
         `;
       }).join('');
